@@ -1,8 +1,13 @@
 import React from "react";
-import MainLayout from "./common/mainLayout/MainLayout";
+import { BrowserRouter } from "react-router-dom";
+import SwitchRoute from "./core/router/SwitchRoute";
 
 function App() {
-  return <MainLayout />;
+  return (
+    <BrowserRouter>
+      <SwitchRoute />
+    </BrowserRouter>
+  );
 }
 
 export default App;
