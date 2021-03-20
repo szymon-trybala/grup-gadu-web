@@ -14,7 +14,7 @@ export const HamburgerSider = styled(Layout.Sider).attrs({
 
 export const SiteLogo = styled.div`
   height: 32px;
-  background: rgba(24, 144, 255, 0.6);
+  background: rgba(63, 191, 84, 0.6);
   margin: 16px;
 `;
 

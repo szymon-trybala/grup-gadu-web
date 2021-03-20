@@ -1,5 +1,5 @@
 import { Avatar, Badge, Layout, Menu, notification, Spin } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   ContentContainer,
   HamburgerSider,
@@ -10,48 +10,39 @@ import {
 } from "./styles";
 import { chatsService } from "../../core/api/chatsService";
 import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
-import ChatAddDialog from "../../features/chatAddDialog/ChatAddDialog";
-import { UsergroupAddOutlined } from "@ant-design/icons";
+import NavBar from "./NavBar";
+import { setSelected } from "../../core/store/slices/chats/chatsSlice";
 
 const MainLayout: React.FC = ({ children }) => {
   const dispatch = useAppDispatch();
   const chatsState = useAppSelector((s) => s.chatsSlice);
-  const [modalVisible, setModalVisible] = useState(false);
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    dispatch(chatsService.fetchChats(token));
+    dispatch(chatsService.fetchChats());
   }, []);
 
   useEffect(() => {
     if (chatsState.promise === "error" && chatsState.error) {
       notification.error({
+        placement: "bottomRight",
         message: `Nie udało się pobrać listy czatów: ${chatsState.error}`,
       });
     }
   }, [chatsState.promise, chatsState.error]);
 
-  const handleNewChat = () => {
-    dispatch(chatsService.fetchChats(token));
-    toggleModal();
+  const handleChangeSelectedChat = (chatId: number) => {
+    dispatch(setSelected(chatId));
   };
 
   return (
     <SiteLayout>
       <HamburgerSider>
         <SiteLogo />
-        <Menu theme="light" mode="inline">
-          <Menu.Item key="addChat" icon={<UsergroupAddOutlined />}>
-            <span onClick={() => toggleModal()}>Dodaj czat</span>
-            <ChatAddDialog
-              visible={modalVisible}
-              onChatAdded={handleNewChat}
-              onDialogCancel={() => toggleModal()}
-            />
-          </Menu.Item>
+        <Menu
+          theme="light"
+          mode="inline"
+          selectedKeys={[chatsState.selectedChat?.id.toString() || "0"]}
+        >
           {chatsState.promise === "pending" && (
             <Menu.Item key="loading">
               <Spin />
@@ -61,6 +52,7 @@ const MainLayout: React.FC = ({ children }) => {
             chatsState.chats.length > 0 &&
             chatsState.chats.map((chat) => (
               <Menu.Item
+                onClick={() => handleChangeSelectedChat(chat.id)}
                 key={chat.id}
                 icon={
                   <Badge count={0} size="small">
@@ -74,6 +66,7 @@ const MainLayout: React.FC = ({ children }) => {
         </Menu>
       </HamburgerSider>
       <Layout>
+        <NavBar />
         <ContentContainer>
           <SiteContent>{children}</SiteContent>
         </ContentContainer>

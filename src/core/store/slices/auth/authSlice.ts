@@ -1,32 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import jwtDecode, { JwtPayload } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import { Auth } from "./types";
+
+const emptyAuthObject: Auth = {
+  login: undefined,
+  token: undefined,
+};
 
 function getInitialAuthStateFromLocalStorate(): Auth {
   try {
     const token = localStorage.getItem("token");
-    if (!token)
-      return {
-        login: undefined,
-        token: undefined,
-      };
+    if (!token) return emptyAuthObject;
 
-    const decoded = jwtDecode<JwtPayload>(token);
-    if (!decoded)
-      return {
-        login: undefined,
-        token: undefined,
-      };
+    const decoded = jwtDecode<any>(token);
+    if (!decoded) return emptyAuthObject;
 
     return {
-      login: decoded.sub,
+      login: decoded.unique_name,
       token: token,
     };
   } catch (error) {
-    return {
-      login: undefined,
-      token: undefined,
-    };
+    return emptyAuthObject;
   }
 }
 

@@ -21,12 +21,14 @@ const Register: React.FC = () => {
       .register(data)
       .then((user) => {
         notification.success({
+          placement: "bottomRight",
           message: `Zarejestrowano się. Witaj, ${user.login}`,
         });
         history.push(routes.chat);
       })
       .catch((err) => {
         notification.error({
+          placement: "bottomRight",
           message: `${err}`,
         });
       });

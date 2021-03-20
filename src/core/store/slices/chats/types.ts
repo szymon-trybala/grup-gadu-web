@@ -4,6 +4,7 @@ export interface ChatsRefreshError {
 
 export interface ChatsState {
   chats: Chat[];
+  selectedChat: Chat | undefined;
   promise: "initial" | "pending" | "error" | "fulfilled";
   error: string | undefined;
 }

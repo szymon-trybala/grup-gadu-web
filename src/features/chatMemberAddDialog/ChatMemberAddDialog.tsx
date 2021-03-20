@@ -1,30 +1,36 @@
 import { Form, Input, notification } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import React from "react";
-import { ChatCreateDto, chatsService } from "../../core/api/chatsService";
+import { ChatInviteDto, chatsService } from "../../core/api/chatsService";
+import { useAppSelector } from "../../core/store/hooks";
 
-interface ChatAddDialogProps {
+interface ChatMemberAddDialogProps {
   visible: boolean;
-  onChatAdded: () => any;
+  onMemberAdded: () => any;
   onDialogCancel: () => any;
 }
 
-const ChatAddDialog: React.FC<ChatAddDialogProps> = ({
+const ChatMemberAddDialog: React.FC<ChatMemberAddDialogProps> = ({
   visible,
-  onChatAdded,
+  onMemberAdded,
   onDialogCancel,
 }) => {
-  const [form] = Form.useForm<ChatCreateDto>();
+  const selectedChat = useAppSelector((x) => x.chatsSlice.selectedChat);
+  const [form] = Form.useForm<ChatInviteDto>();
 
-  const onSubmit = (data: ChatCreateDto) => {
+  const onSubmit = (data: ChatInviteDto) => {
+    if (!selectedChat) return;
     chatsService
-      .createChat(data)
+      .inviteToChat({
+        chatId: selectedChat.id,
+        userLogin: data.userLogin,
+      })
       .then((chat) => {
         notification.success({
           placement: "bottomRight",
-          message: "Utworzono nowy czat",
+          message: `Dodano do czatu uzytkownika ${data.userLogin}`,
         });
-        onChatAdded();
+        onMemberAdded();
       })
       .catch((err) => {
         notification.error({
@@ -36,11 +42,11 @@ const ChatAddDialog: React.FC<ChatAddDialogProps> = ({
 
   return (
     <Modal
-      title="Nowy czat"
+      title="Nowe zaproszenie"
       visible={visible}
       onCancel={onDialogCancel}
       destroyOnClose
-      okText="Utwórz czat"
+      okText="Zaproś"
       cancelText="Anuluj"
       onOk={() => {
         form.validateFields().then((values) => {
@@ -51,16 +57,16 @@ const ChatAddDialog: React.FC<ChatAddDialogProps> = ({
     >
       <Form form={form} onFinish={onSubmit} size="large">
         <Form.Item
-          label="Nazwa"
-          name="name"
+          label="Login"
+          name="userLogin"
           rules={[
             {
               required: true,
               message: "Musisz uzupełnić to pole",
             },
             {
-              min: 4,
-              message: "Nazwa czatu musi mieć co najmniej 4 znaki",
+              min: 6,
+              message: "Login musi mieć co najmniej 6 znaków",
             },
           ]}
         >
@@ -71,4 +77,4 @@ const ChatAddDialog: React.FC<ChatAddDialogProps> = ({
   );
 };
 
-export default ChatAddDialog;
+export default ChatMemberAddDialog;

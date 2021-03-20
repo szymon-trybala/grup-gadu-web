@@ -30,12 +30,14 @@ const Login: React.FC = () => {
         set(user);
         localStorage.setItem("token", user.token);
         notification.success({
+          placement: "bottomRight",
           message: `Zalogowano się. Witaj, ${user.login}`,
         });
         history.push(routes.chat);
       })
       .catch((err) => {
         notification.error({
+          placement: "bottomRight",
           message: `${err}`,
         });
       });
