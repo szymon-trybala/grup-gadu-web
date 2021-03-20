@@ -23,7 +23,7 @@ const Register: React.FC = () => {
         notification.success({
           message: `Zarejestrowano się. Witaj, ${user.login}`,
         });
-        history.push(routes.conversation);
+        history.push(routes.chat);
       })
       .catch((err) => {
         notification.error({

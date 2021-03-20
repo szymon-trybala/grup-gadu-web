@@ -32,7 +32,7 @@ const Login: React.FC = () => {
         notification.success({
           message: `Zalogowano się. Witaj, ${user.login}`,
         });
-        history.push(routes.conversation);
+        history.push(routes.chat);
       })
       .catch((err) => {
         notification.error({

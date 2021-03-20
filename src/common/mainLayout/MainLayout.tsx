@@ -1,5 +1,5 @@
-import { Avatar, Badge, Layout, Menu } from "antd";
-import React from "react";
+import { Avatar, Badge, Layout, Menu, notification, Spin } from "antd";
+import React, { useEffect, useState } from "react";
 import {
   ContentContainer,
   HamburgerSider,
@@ -8,29 +8,69 @@ import {
   SiteLayout,
   SiteLogo,
 } from "./styles";
-import { useSelector } from "react-redux";
-import { RootState } from "../../core/store/rootReducer";
+import { chatsService } from "../../core/api/chatsService";
+import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
+import ChatAddDialog from "../../features/chatAddDialog/ChatAddDialog";
+import { UsergroupAddOutlined } from "@ant-design/icons";
 
 const MainLayout: React.FC = ({ children }) => {
-  const groups = useSelector((state: RootState) => state.groupsSlice);
+  const dispatch = useAppDispatch();
+  const chatsState = useAppSelector((s) => s.chatsSlice);
+  const [modalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    dispatch(chatsService.fetchChats(token));
+  }, []);
+
+  useEffect(() => {
+    if (chatsState.promise === "error" && chatsState.error) {
+      notification.error({
+        message: `Nie udało się pobrać listy czatów: ${chatsState.error}`,
+      });
+    }
+  }, [chatsState.promise, chatsState.error]);
+
+  const handleNewChat = () => {
+    dispatch(chatsService.fetchChats(token));
+    toggleModal();
+  };
 
   return (
     <SiteLayout>
       <HamburgerSider>
         <SiteLogo />
-        <Menu theme="light" mode="inline" defaultSelectedKeys={["1"]}>
-          {groups.map((g) => (
-            <Menu.Item
-              key={g.id}
-              icon={
-                <Badge count={g.unread} size="small">
-                  <Avatar size={27}>{g.name.slice(0, 1)}</Avatar>
-                </Badge>
-              }
-            >
-              {g.name}
+        <Menu theme="light" mode="inline">
+          <Menu.Item key="addChat" icon={<UsergroupAddOutlined />}>
+            <span onClick={() => toggleModal()}>Dodaj czat</span>
+            <ChatAddDialog
+              visible={modalVisible}
+              onChatAdded={handleNewChat}
+              onDialogCancel={() => toggleModal()}
+            />
+          </Menu.Item>
+          {chatsState.promise === "pending" && (
+            <Menu.Item key="loading">
+              <Spin />
             </Menu.Item>
-          ))}
+          )}
+          {chatsState.promise === "fulfilled" &&
+            chatsState.chats.length > 0 &&
+            chatsState.chats.map((chat) => (
+              <Menu.Item
+                key={chat.id}
+                icon={
+                  <Badge count={0} size="small">
+                    <Avatar size={27}>{chat.name.slice(0, 1)}</Avatar>
+                  </Badge>
+                }
+              >
+                {chat.name}
+              </Menu.Item>
+            ))}
         </Menu>
       </HamburgerSider>
       <Layout>

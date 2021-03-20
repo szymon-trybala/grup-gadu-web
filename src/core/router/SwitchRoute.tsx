@@ -14,7 +14,7 @@ const SwitchRoute: React.FC = () => {
       <Route path={routes.register}>
         <Register />
       </Route>
-      <Route path={routes.conversation}>
+      <Route path={routes.chat}>
         <MainLayout />
       </Route>
       <Route path={routes.home}>
