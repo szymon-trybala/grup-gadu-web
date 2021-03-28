@@ -6,6 +6,7 @@ export interface LoginDto {
 export interface UserDto {
   login: string;
   token: string;
+  id: number;
 }
 
 export interface RegisterDto {
@@ -40,7 +41,7 @@ async function register(registerDto: RegisterDto): Promise<UserDto> {
     },
     body: JSON.stringify(registerDto),
   });
-  
+
   if (!response.ok) {
     return Promise.reject(new Error("Błąd serwera"));
   }

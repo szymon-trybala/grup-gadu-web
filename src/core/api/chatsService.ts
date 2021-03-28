@@ -2,6 +2,20 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Chat, ChatsRefreshError } from "../store/slices/chats/types";
 import { AppDispatch } from "../store/store";
 
+export interface MemberDto {
+  login: string;
+  id: number;
+}
+
+export interface ChatDto {
+  id: number;
+  name: string;
+  createdAt: Date;
+  owner: MemberDto;
+  members: MemberDto[];
+  unreadMessages: number;
+}
+
 export interface ChatCreateDto {
   name: string;
 }
