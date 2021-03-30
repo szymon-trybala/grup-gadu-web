@@ -1,8 +1,8 @@
 import React from "react";
 import { Route, Switch } from "react-router";
-import MainLayout from "../../common/mainLayout/MainLayout";
 import Login from "../../features/auth/Login";
 import Register from "../../features/auth/Register";
+import Messages from "../../features/messages/Messages";
 import { routes } from "./routes";
 
 const SwitchRoute: React.FC = () => {
@@ -15,7 +15,7 @@ const SwitchRoute: React.FC = () => {
         <Register />
       </Route>
       <Route path={routes.chat}>
-        <MainLayout />
+        <Messages />
       </Route>
       <Route path={routes.home}>
         <Login />

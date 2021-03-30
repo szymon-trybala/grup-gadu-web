@@ -3,8 +3,7 @@ import jwtDecode from "jwt-decode";
 import { Auth } from "./types";
 
 const emptyAuthObject: Auth = {
-  login: undefined,
-  token: undefined,
+  user: undefined,
 };
 
 function getInitialAuthStateFromLocalStorate(): Auth {
@@ -16,8 +15,11 @@ function getInitialAuthStateFromLocalStorate(): Auth {
     if (!decoded) return emptyAuthObject;
 
     return {
-      login: decoded.unique_name,
-      token: token,
+      user: {
+        login: decoded.unique_name,
+        id: decoded.nameid,
+        token: token,
+      },
     };
   } catch (error) {
     return emptyAuthObject;

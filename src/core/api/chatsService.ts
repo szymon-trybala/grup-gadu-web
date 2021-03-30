@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Chat, ChatsRefreshError } from "../store/slices/chats/types";
+import { ChatsRefreshError } from "../store/slices/chats/types";
 import { AppDispatch } from "../store/store";
 
 export interface MemberDto {
@@ -30,7 +30,7 @@ export interface ChatInviteDto {
 }
 
 const fetchChats = createAsyncThunk<
-  Chat[],
+  ChatDto[],
   undefined,
   {
     dispatch: AppDispatch;
@@ -55,11 +55,11 @@ const fetchChats = createAsyncThunk<
     return thunkApi.rejectWithValue({ errorMessage: "Błąd serwera" });
   }
 
-  const chats = (await response.json()) as Chat[];
+  const chats = (await response.json()) as ChatDto[];
   return chats;
 });
 
-const createChat = async (dto: ChatCreateDto): Promise<Chat> => {
+const createChat = async (dto: ChatCreateDto): Promise<ChatDto> => {
   const token = localStorage.getItem("token");
   if (!token || token === null || token.length < 1)
     return Promise.reject(new Error("Niepoprawny token"));
@@ -77,7 +77,7 @@ const createChat = async (dto: ChatCreateDto): Promise<Chat> => {
   } else if (!response.ok) {
     return Promise.reject(new Error("Błąd serwera"));
   }
-  const body = (await response.json()) as Chat;
+  const body = (await response.json()) as ChatDto;
   return body;
 };
 

@@ -19,7 +19,7 @@ const MainLayout: React.FC = ({ children }) => {
 
   useEffect(() => {
     dispatch(chatsService.fetchChats());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (chatsState.promise === "error" && chatsState.error) {

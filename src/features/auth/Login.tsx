@@ -27,7 +27,9 @@ const Login: React.FC = () => {
     authService
       .login(data)
       .then((user) => {
-        set(user);
+        set({
+          user: user,
+        });
         localStorage.setItem("token", user.token);
         notification.success({
           placement: "bottomRight",

@@ -24,7 +24,7 @@ const ChatSettingsDrawer: React.FC<ChatSettingsDrawerProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const selectedChat = useAppSelector((x) => x.chatsSlice.selectedChat);
-  const userLogin = useAppSelector((x) => x.authSlice.login);
+  const userLogin = useAppSelector((x) => x.authSlice.user?.login);
   const [chatInviteVisible, setChatInviteVisible] = useState(false);
   const toggleChatInviteVisible = () => {
     setChatInviteVisible(!chatInviteVisible);
