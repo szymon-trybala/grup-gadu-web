@@ -2,14 +2,16 @@ import { UserOutlined } from "@ant-design/icons";
 import {
   HubConnection,
   HubConnectionBuilder,
-  HubConnectionState,
   LogLevel,
 } from "@microsoft/signalr";
 import { Avatar, Comment, notification, Tooltip } from "antd";
 import Search from "antd/lib/input/Search";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import MessagesListEmptyFeedback from "../../common/feedbacks/MessagesListEmptyFeedback";
+import MessagesListErrorFeedback from "../../common/feedbacks/MessagesListErrorFeedback";
 import MainLayout from "../../common/mainLayout/MainLayout";
+import LoadingMessagesSkeleton from "../../common/skeletons/LoadingMessagesSkeleton";
 import { MessageDto, messagesService } from "../../core/api/messagesService";
 import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
 import { addMessage } from "../../core/store/slices/messages/messagesSlice";
@@ -24,7 +26,11 @@ const Messages: React.FC = () => {
 
   useEffect(() => {
     if (!selectedChat) return;
-    dispatch(messagesService.fetchMessages({ chatId: selectedChat.id }));
+    dispatch(messagesService.fetchMessages({ chatId: selectedChat.id })).then(
+      () => {
+        dummy.current?.scrollIntoView({ behavior: "smooth" });
+      }
+    );
   }, [selectedChat, dispatch]);
 
   useEffect(() => {
@@ -50,14 +56,16 @@ const Messages: React.FC = () => {
 
     return () => {
       if (connection && selectedChat?.id)
-        connection?.invoke("leave", selectedChat.id)
-        .then(() => connection.stop());
+        connection
+          ?.invoke("leave", selectedChat.id)
+          .then(() => connection.stop());
     };
   }, [selectedChat]);
 
   useEffect(() => {
     connection?.on("newMessage", (message: MessageDto) => {
       dispatch(addMessage(message));
+      dummy.current?.scrollIntoView({ behavior: "smooth" });
     });
   }, [connection, dispatch]);
 
@@ -72,6 +80,8 @@ const Messages: React.FC = () => {
     );
   };
 
+  const dummy = useRef<HTMLDivElement | null>();
+
   return (
     <MainLayout>
       <div
@@ -82,19 +92,33 @@ const Messages: React.FC = () => {
         }}
       >
         <div style={{ overflow: "auto", height: "calc(100vh - 250px)" }}>
-          {messagesState.messages.map((x) => (
-            <Comment
-              key={x.id}
-              author={x.authorLogin}
-              avatar={<Avatar alt={x.authorLogin} icon={<UserOutlined />} />}
-              content={<p>{x.content}</p>}
-              datetime={
-                <Tooltip title={moment().format("DD-MM-YYYY HH:mm:ss")}>
-                  <span>{moment().fromNow()}</span>
-                </Tooltip>
-              }
-            />
-          ))}
+          {messagesState.promise === "pending" && <LoadingMessagesSkeleton />}
+          {messagesState.promise === "error" && <MessagesListErrorFeedback />}
+          {messagesState.promise === "fulfilled" &&
+            messagesState.messages.length === 0 && (
+              <MessagesListEmptyFeedback />
+            )}
+          {messagesState.promise === "fulfilled" &&
+            messagesState.messages.length > 0 &&
+            messagesState.messages.map((x) => (
+              <Comment
+                key={x.id}
+                author={x.authorLogin}
+                avatar={<Avatar alt={x.authorLogin} icon={<UserOutlined />} />}
+                content={<p>{x.content}</p>}
+                datetime={
+                  <Tooltip title={moment().format("DD-MM-YYYY HH:mm:ss")}>
+                    <span>{moment().fromNow()}</span>
+                  </Tooltip>
+                }
+              />
+            ))}
+          <div
+            style={{ float: "left", clear: "both" }}
+            ref={(el) => {
+              dummy.current = el;
+            }}
+          />
         </div>
 
         <Search

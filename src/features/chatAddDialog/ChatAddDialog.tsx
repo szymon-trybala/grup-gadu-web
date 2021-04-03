@@ -13,6 +13,7 @@ const ChatAddDialog: React.FC<ChatAddDialogProps> = ({
   visible,
   onChatAdded,
   onDialogCancel,
+  children
 }) => {
   const [form] = Form.useForm<ChatCreateDto>();
 
@@ -35,6 +36,8 @@ const ChatAddDialog: React.FC<ChatAddDialogProps> = ({
   };
 
   return (
+    <>
+    {children}
     <Modal
       title="Nowy czat"
       visible={visible}
@@ -68,6 +71,8 @@ const ChatAddDialog: React.FC<ChatAddDialogProps> = ({
         </Form.Item>
       </Form>
     </Modal>
+    </>
+   
   );
 };
 
