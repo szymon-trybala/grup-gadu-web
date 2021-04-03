@@ -30,12 +30,15 @@ const authSlice = createSlice({
   name: "auth",
   initialState: getInitialAuthStateFromLocalStorate(),
   reducers: {
-    set(state, action: PayloadAction<Auth>) {
+    setUser(state, action: PayloadAction<Auth>) {
       return action.payload;
+    },
+    clearUser(state, action: PayloadAction<void>) {
+      state.user = undefined;
     },
   },
 });
 
-export const { set } = authSlice.actions;
+export const { setUser, clearUser } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,14 +1,18 @@
-import { Button, Form, Input, notification } from "antd";
+import { Button, Form, Input } from "antd";
 import React from "react";
 import { authService, RegisterDto } from "../../core/api/authService";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { AuthContainer, AuthContent, AuthFooter, AuthLayout } from "./styles";
 import { useHistory } from "react-router";
 import { routes } from "../../core/router/routes";
+import { alert } from "../../common/alerts/alerts";
+import { useDispatch } from "react-redux";
+import { clearUser } from "../../core/store/slices/auth/authSlice";
 
 const Register: React.FC = () => {
   const [form] = Form.useForm<RegisterDto>();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const submitButtonLayout = {
     wrapperCol: {
@@ -20,17 +24,12 @@ const Register: React.FC = () => {
     authService
       .register(data)
       .then((user) => {
-        notification.success({
-          placement: "bottomRight",
-          message: `Zarejestrowano się. Witaj, ${user.login}`,
-        });
-        history.push(routes.chat);
+        dispatch(clearUser());
+        alert.success(`Zarejestrowano, teraz mozesz się zalogować`);
+        history.push(routes.login);
       })
       .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: `${err}`,
-        });
+        alert.error(`${err}`);
       });
   };
 

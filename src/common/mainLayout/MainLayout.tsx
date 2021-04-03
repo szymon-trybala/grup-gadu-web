@@ -1,4 +1,4 @@
-import { Avatar, Badge, Layout, Menu, notification } from "antd";
+import { Avatar, Badge, Layout, Menu } from "antd";
 import React, { useEffect } from "react";
 import {
   ContentContainer,
@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
 import NavBar from "./NavBar";
 import { setSelected } from "../../core/store/slices/chats/chatsSlice";
 import LoadingChatSkeleton from "../skeletons/LoadingChatsSkeleton";
+import { alert } from "../alerts/alerts";
 
 const MainLayout: React.FC = ({ children }) => {
   const dispatch = useAppDispatch();
@@ -24,10 +25,7 @@ const MainLayout: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (chatsState.promise === "error" && chatsState.error) {
-      notification.error({
-        placement: "bottomRight",
-        message: `Nie udało się pobrać listy czatów: ${chatsState.error}`,
-      });
+      alert.error(`Nie udało się pobrać listy czatów: ${chatsState.error}`);
     }
   }, [chatsState.promise, chatsState.error]);
 
