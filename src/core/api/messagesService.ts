@@ -16,7 +16,6 @@ export interface MessageDto {
   chatName: string;
   createdAt: Date;
   content: string;
-  seenBy: SeenByDto[];
 }
 
 export interface MessageSendDto {
