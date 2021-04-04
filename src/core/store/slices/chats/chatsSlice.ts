@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { chatsService } from "../../../api/chatsService";
-import { Chat, ChatsState } from "./types";
+import { ChatDto, chatsService } from "../../../api/chatsService";
+import { ChatsState } from "./types";
 
 const initialState: ChatsState = {
   chats: [],
@@ -13,10 +13,10 @@ const chatsSlice = createSlice({
   name: "chats",
   initialState,
   reducers: {
-    add(state, action: PayloadAction<Chat>) {
+    add(state, action: PayloadAction<ChatDto>) {
       state.chats.push(action.payload);
     },
-    set(state, action: PayloadAction<Chat[]>) {
+    set(state, action: PayloadAction<ChatDto[]>) {
       state.chats = action.payload;
     },
     setSelected(state, action: PayloadAction<number>) {

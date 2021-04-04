@@ -1,6 +1,7 @@
-import { Form, Input, notification } from "antd";
+import { Form, Input } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import React from "react";
+import { alert } from "../../common/alerts/alerts";
 import { ChatInviteDto, chatsService } from "../../core/api/chatsService";
 import { useAppSelector } from "../../core/store/hooks";
 
@@ -26,17 +27,11 @@ const ChatMemberAddDialog: React.FC<ChatMemberAddDialogProps> = ({
         userLogin: data.userLogin,
       })
       .then((chat) => {
-        notification.success({
-          placement: "bottomRight",
-          message: `Dodano do czatu uzytkownika ${data.userLogin}`,
-        });
+        alert.success(`Dodano do czatu uzytkownika ${data.userLogin}`);
         onMemberAdded();
       })
       .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: `${err}`,
-        });
+        alert.error(`${err}`);
       });
   };
 

@@ -1,4 +1,4 @@
-import { Button, Form, Input, notification } from "antd";
+import { Button, Form, Input } from "antd";
 import React from "react";
 import { authService, LoginDto } from "../../core/api/authService";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
@@ -9,11 +9,14 @@ import {
   AuthLayout,
   AuthRegisterInfo,
 } from "./styles";
-import { set } from "../../core/store/slices/auth/authSlice";
+import { setUser } from "../../core/store/slices/auth/authSlice";
 import { Link, useHistory } from "react-router-dom";
 import { routes } from "../../core/router/routes";
+import { alert } from "../../common/alerts/alerts";
+import { useDispatch } from "react-redux";
 
 const Login: React.FC = () => {
+  const dispatch = useDispatch();
   const [form] = Form.useForm<LoginDto>();
   const history = useHistory();
 
@@ -27,19 +30,17 @@ const Login: React.FC = () => {
     authService
       .login(data)
       .then((user) => {
-        set(user);
+        dispatch(
+          setUser({
+            user: user,
+          })
+        );
         localStorage.setItem("token", user.token);
-        notification.success({
-          placement: "bottomRight",
-          message: `Zalogowano się. Witaj, ${user.login}`,
-        });
+        alert.success(`Zalogowano się. Witaj, ${user.login}`);
         history.push(routes.chat);
       })
       .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: `${err}`,
-        });
+        alert.error(`${err}`);
       });
   };
 

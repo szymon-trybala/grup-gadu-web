@@ -1,4 +1,4 @@
-import { Avatar, Badge, Layout, Menu, notification, Spin } from "antd";
+import { Avatar, Badge, Layout, Menu } from "antd";
 import React, { useEffect } from "react";
 import {
   ContentContainer,
@@ -12,6 +12,8 @@ import { chatsService } from "../../core/api/chatsService";
 import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
 import NavBar from "./NavBar";
 import { setSelected } from "../../core/store/slices/chats/chatsSlice";
+import LoadingChatSkeleton from "../skeletons/LoadingChatsSkeleton";
+import { alert } from "../alerts/alerts";
 
 const MainLayout: React.FC = ({ children }) => {
   const dispatch = useAppDispatch();
@@ -19,14 +21,11 @@ const MainLayout: React.FC = ({ children }) => {
 
   useEffect(() => {
     dispatch(chatsService.fetchChats());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (chatsState.promise === "error" && chatsState.error) {
-      notification.error({
-        placement: "bottomRight",
-        message: `Nie udało się pobrać listy czatów: ${chatsState.error}`,
-      });
+      alert.error(`Nie udało się pobrać listy czatów: ${chatsState.error}`);
     }
   }, [chatsState.promise, chatsState.error]);
 
@@ -44,12 +43,22 @@ const MainLayout: React.FC = ({ children }) => {
           selectedKeys={[chatsState.selectedChat?.id.toString() || "0"]}
         >
           {chatsState.promise === "pending" && (
-            <Menu.Item key="loading">
-              <Spin />
-            </Menu.Item>
+            <>
+              <Menu.Item>
+                <LoadingChatSkeleton />
+              </Menu.Item>
+              <Menu.Item>
+                <LoadingChatSkeleton />
+              </Menu.Item>
+              <Menu.Item>
+                <LoadingChatSkeleton />
+              </Menu.Item>
+              <Menu.Item>
+                <LoadingChatSkeleton />
+              </Menu.Item>
+            </>
           )}
           {chatsState.promise === "fulfilled" &&
-            chatsState.chats.length > 0 &&
             chatsState.chats.map((chat) => (
               <Menu.Item
                 onClick={() => handleChangeSelectedChat(chat.id)}

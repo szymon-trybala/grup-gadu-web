@@ -1,17 +1,9 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Drawer,
-  Empty,
-  List,
-  notification,
-  Space,
-  Spin,
-  Typography,
-} from "antd";
+import { Button, Drawer, Empty, List, Space, Spin, Typography } from "antd";
 import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
 import { chatsService } from "../../core/api/chatsService";
 import ChatMemberAddDialog from "../chatMemberAddDialog/ChatMemberAddDialog";
+import { alert } from "../../common/alerts/alerts";
 
 interface ChatSettingsDrawerProps {
   visible: boolean;
@@ -24,7 +16,7 @@ const ChatSettingsDrawer: React.FC<ChatSettingsDrawerProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const selectedChat = useAppSelector((x) => x.chatsSlice.selectedChat);
-  const userLogin = useAppSelector((x) => x.authSlice.login);
+  const userLogin = useAppSelector((x) => x.authSlice.user?.login);
   const [chatInviteVisible, setChatInviteVisible] = useState(false);
   const toggleChatInviteVisible = () => {
     setChatInviteVisible(!chatInviteVisible);
@@ -39,18 +31,12 @@ const ChatSettingsDrawer: React.FC<ChatSettingsDrawerProps> = ({
         chatId: selectedChat.id,
       })
       .then(() => {
-        notification.success({
-          message: `Opuściłeś grupę ${chatName || ""}`,
-          placement: "bottomRight",
-        });
+        alert.success(`Opuściłeś grupę ${chatName || ""}`);
         dispatch(chatsService.fetchChats());
         onModalClose();
       })
       .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: `${err}`,
-        });
+        alert.error(`${err}`);
       });
   };
 
@@ -61,6 +47,7 @@ const ChatSettingsDrawer: React.FC<ChatSettingsDrawerProps> = ({
 
   return (
     <Drawer
+      width={350}
       title={
         <>
           <Typography.Title level={3}>
@@ -72,12 +59,12 @@ const ChatSettingsDrawer: React.FC<ChatSettingsDrawerProps> = ({
           </Typography.Title>
         </>
       }
-      placement="right"
+      placement="left"
       visible={visible}
       onClose={onModalClose}
       destroyOnClose
       footer={
-        <Space direction="horizontal" size={40}>
+        <Space direction="horizontal" size={10}>
           <Button onClick={handleLeaveChat} danger>
             Opuść czat
           </Button>
