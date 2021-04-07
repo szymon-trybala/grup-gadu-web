@@ -36,7 +36,11 @@ const Messages: React.FC = () => {
 
   useEffect(() => {
     if (!selectedChat) return;
-    dispatch(messagesService.fetchMessages({ chatId: selectedChat.id }));
+    dispatch(messagesService.fetchMessages({ chatId: selectedChat.id })).then(
+      () => {
+        dispatch(invoke.readAllMessages(selectedChat.id));
+      }
+    );
   }, [selectedChat, dispatch]);
 
   return (

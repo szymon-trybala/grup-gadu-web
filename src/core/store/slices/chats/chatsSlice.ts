@@ -13,17 +13,29 @@ const chatsSlice = createSlice({
   name: "chats",
   initialState,
   reducers: {
-    add(state, action: PayloadAction<ChatDto>) {
+    addChat(state, action: PayloadAction<ChatDto>) {
       state.chats.push(action.payload);
     },
-    set(state, action: PayloadAction<ChatDto[]>) {
+    setChatList(state, action: PayloadAction<ChatDto[]>) {
       state.chats = action.payload;
     },
-    setSelected(state, action: PayloadAction<number>) {
+    setSelectedChat(state, action: PayloadAction<number>) {
+      state.chats = state.chats.map((x) => {
+        if (x.id === action.payload) return { ...x, unreadMessages: 0 };
+        return x;
+      });
       const newChat = state.chats.find((x) => x.id === action.payload);
       if (newChat) {
         state.selectedChat = newChat;
       }
+    },
+    newMessageInChat(state, action: PayloadAction<number>) {
+      if (state.selectedChat && state.selectedChat?.id !== action.payload)
+        state.chats = state.chats.map((x) => {
+          if (x.id === action.payload)
+            return { ...x, unreadMessages: x.unreadMessages + 1 };
+          return x;
+        });
     },
   },
   extraReducers: (builder) => {
@@ -46,6 +58,11 @@ const chatsSlice = createSlice({
   },
 });
 
-export const { add, set, setSelected } = chatsSlice.actions;
+export const {
+  addChat,
+  setChatList,
+  setSelectedChat,
+  newMessageInChat,
+} = chatsSlice.actions;
 
 export default chatsSlice.reducer;

@@ -1,9 +1,9 @@
 import { Form, Input } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import React from "react";
-import { alert } from "../../common/alerts/alerts";
-import { ChatInviteDto, chatsService } from "../../core/api/chatsService";
-import { useAppSelector } from "../../core/store/hooks";
+import { ChatInviteDto } from "../../core/api/chatsService";
+import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
+import { invoke } from "../../core/store/middlewares/signalr/invoke";
 
 interface ChatMemberAddDialogProps {
   visible: boolean;
@@ -16,23 +16,14 @@ const ChatMemberAddDialog: React.FC<ChatMemberAddDialogProps> = ({
   onMemberAdded,
   onDialogCancel,
 }) => {
+  const dispatch = useAppDispatch();
   const selectedChat = useAppSelector((x) => x.chatsSlice.selectedChat);
   const [form] = Form.useForm<ChatInviteDto>();
 
   const onSubmit = (data: ChatInviteDto) => {
     if (!selectedChat) return;
-    chatsService
-      .inviteToChat({
-        chatId: selectedChat.id,
-        userLogin: data.userLogin,
-      })
-      .then((chat) => {
-        alert.success(`Dodano do czatu uzytkownika ${data.userLogin}`);
-        onMemberAdded();
-      })
-      .catch((err) => {
-        alert.error(`${err}`);
-      });
+    dispatch(invoke.invite(data.userLogin, selectedChat.id));
+    onMemberAdded();
   };
 
   return (

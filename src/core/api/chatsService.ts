@@ -123,7 +123,7 @@ const inviteToChat = async (dto: ChatInviteDto): Promise<void> => {
       },
     }
   );
-  if (response.status === 404) {
+  if (response.status === 404 || response.status === 400) {
     const message = (await response.json()) as string;
     return Promise.reject(new Error(message || response.statusText));
   }

@@ -17,6 +17,8 @@ import { SiteHeader } from "./styles";
 
 const NavBar: React.FC = () => {
   const selectedChat = useAppSelector((s) => s.chatsSlice.selectedChat);
+  const user = useAppSelector((s) => s.authSlice.user);
+
   const dispatch = useAppDispatch();
   const history = useHistory();
   const [modalVisible, setModalVisible] = useState(false);
@@ -79,7 +81,7 @@ const NavBar: React.FC = () => {
         </Col>
         <Col flex="50px">
           <Button type="link" icon={<LogoutOutlined />} onClick={logout}>
-            Wyloguj
+            Wyloguj {user?.login}
           </Button>
         </Col>
       </Row>

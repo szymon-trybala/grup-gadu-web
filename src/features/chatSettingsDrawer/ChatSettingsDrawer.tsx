@@ -41,7 +41,6 @@ const ChatSettingsDrawer: React.FC<ChatSettingsDrawerProps> = ({
   };
 
   const handleNewChatMember = () => {
-    dispatch(chatsService.fetchChats());
     toggleChatInviteVisible();
   };
 

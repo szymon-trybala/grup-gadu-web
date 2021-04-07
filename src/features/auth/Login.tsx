@@ -12,8 +12,8 @@ import {
 import { setUser } from "../../core/store/slices/auth/authSlice";
 import { Link, useHistory } from "react-router-dom";
 import { routes } from "../../core/router/routes";
-import { alert } from "../../common/alerts/alerts";
 import { useDispatch } from "react-redux";
+import { alert } from "../../common/alerts/alerts";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();

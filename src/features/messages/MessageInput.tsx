@@ -13,7 +13,7 @@ const MessageInput: React.FC = () => {
   const onSubmit = async (message: string) => {
     if (!message || !selectedChat?.id || !authState.user?.id) return;
     dispatch(
-      invoke.sendMessage(Number(authState.user.id), selectedChat.id, message)
+      invoke.sendMessage(selectedChat.id, message)
     );
     searchInputRef.current?.setValue("");
   };

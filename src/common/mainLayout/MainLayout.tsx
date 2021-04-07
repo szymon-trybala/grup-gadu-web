@@ -11,7 +11,7 @@ import {
 import { chatsService } from "../../core/api/chatsService";
 import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
 import NavBar from "./NavBar";
-import { setSelected } from "../../core/store/slices/chats/chatsSlice";
+import { setSelectedChat } from "../../core/store/slices/chats/chatsSlice";
 import LoadingChatSkeleton from "../skeletons/LoadingChatsSkeleton";
 import { alert } from "../alerts/alerts";
 
@@ -30,7 +30,7 @@ const MainLayout: React.FC = ({ children }) => {
   }, [chatsState.promise, chatsState.error]);
 
   const handleChangeSelectedChat = (chatId: number) => {
-    dispatch(setSelected(chatId));
+    dispatch(setSelectedChat(chatId));
   };
 
   return (
@@ -64,7 +64,7 @@ const MainLayout: React.FC = ({ children }) => {
                 onClick={() => handleChangeSelectedChat(chat.id)}
                 key={chat.id}
                 icon={
-                  <Badge count={0} size="small">
+                  <Badge count={chat.unreadMessages} size="small">
                     <Avatar size={27}>{chat.name.slice(0, 1)}</Avatar>
                   </Badge>
                 }

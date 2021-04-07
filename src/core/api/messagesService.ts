@@ -23,6 +23,11 @@ export interface MessageSendDto {
   messageContent: string;
 }
 
+export interface MessageDetailsDto {
+  chatId: number;
+  messageId: number;
+}
+
 const fetchMessages = createAsyncThunk<
   MessageDto[],
   {
@@ -84,7 +89,39 @@ const createMessage = async (dto: MessageSendDto): Promise<void> => {
   return;
 };
 
+const details = async (dto: MessageDetailsDto): Promise<SeenByDto[]> => {
+  const token = localStorage.getItem("token");
+  if (!token || token === null || token.length < 1)
+    return Promise.reject(new Error("Niepoprawny token"));
+
+  const response = await fetch(
+    `api/message/details?chatId=${dto.chatId}&messageId=${dto.messageId}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (response.status === 400) {
+    const message = (await response.json()) as string;
+    return Promise.reject(
+      new Error(`${message || "Błąd podczas przetwarzania ządania"}`)
+    );
+  } else if (response.status === 401) {
+    return Promise.reject(new Error("Błąd autoryzacji"));
+  } else if (!response.ok) {
+    return Promise.reject(new Error("Błąd serwera"));
+  }
+
+  const details = (await response.json()) as SeenByDto[];
+  return details;
+};
+
 export const messagesService = {
   fetchMessages,
   createMessage,
+  details
 };
