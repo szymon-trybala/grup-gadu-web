@@ -14,6 +14,7 @@ import { Link, useHistory } from "react-router-dom";
 import { routes } from "../../core/router/routes";
 import { useDispatch } from "react-redux";
 import { alert } from "../../common/alerts/alerts";
+import { connectToHub } from "../../core/store/middlewares/signalr/signalrSlice";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ const Login: React.FC = () => {
         );
         localStorage.setItem("token", user.token);
         alert.success(`Zalogowano się. Witaj, ${user.login}`);
+        connectToHub();
         history.push(routes.chat);
       })
       .catch((err) => {

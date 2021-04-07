@@ -10,6 +10,7 @@ import { useHistory } from "react-router";
 import { chatsService } from "../../core/api/chatsService";
 import { routes } from "../../core/router/routes";
 import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
+import { invoke } from "../../core/store/middlewares/signalr/invoke";
 import { clearUser } from "../../core/store/slices/auth/authSlice";
 import ChatAddDialog from "../../features/chatAddDialog/ChatAddDialog";
 import ChatSettingsDrawer from "../../features/chatSettingsDrawer/ChatSettingsDrawer";
@@ -38,6 +39,7 @@ const NavBar: React.FC = () => {
   };
 
   const logout = () => {
+    selectedChat && dispatch(invoke.leaveChat(selectedChat.id));
     dispatch(clearUser());
     localStorage.removeItem("token");
     history.push(routes.login);

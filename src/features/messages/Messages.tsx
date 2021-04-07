@@ -61,7 +61,7 @@ const Messages: React.FC = () => {
                 )}
               {messagesState.promise === "fulfilled" &&
                 messagesState.messages.length > 0 &&
-                messagesState.messages.map((x) => <Message message={x} />)}
+                messagesState.messages.map((x, i) => <Message key={i} message={x} />)}
               <MessagesListEnd
                 ref={(el) => {
                   messagesListEnd.current = el;
