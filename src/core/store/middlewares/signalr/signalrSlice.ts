@@ -1,8 +1,9 @@
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import {
-  withCallbacks,
-  signalMiddleware,
-} from "redux-signalr";
+  HubConnectionBuilder,
+  HubConnectionState,
+  LogLevel,
+} from "@microsoft/signalr";
+import { withCallbacks, signalMiddleware } from "redux-signalr";
 import { ChatDto } from "../../../api/chatsService";
 import { MessageDto } from "../../../api/messagesService";
 import { addChat, newMessageInChat } from "../../slices/chats/chatsSlice";
@@ -39,14 +40,30 @@ export const signal = signalMiddleware({
 export const connectToHub = () => {
   const token = localStorage.getItem("token");
   if (token) {
-    connection
-      .start()
+    tryDisconnectFromHub().then(() => {
+      connection
+        .start()
+        .then(() => {
+          console.log("Started connection via SignalR");
+        })
+        .catch((err) => {
+          console.error(err);
+          alert.error("Nie udało się nawiązać połączenia z serwerem");
+        });
+    });
+  }
+};
+
+export const tryDisconnectFromHub = (): Promise<void> => {
+  if (connection.state !== HubConnectionState.Disconnected) {
+    return connection
+      .stop()
       .then(() => {
-        console.log("Started connection via SignalR");
+        console.log("Disconnected from signalr hub");
       })
       .catch((err) => {
         console.error(err);
-        alert.error("Nie udało się nawiązać połączenia z serwerem");
+        alert.error("Nie udało się rozłączyć z serwerem");
       });
-  }
+  } else return Promise.resolve();
 };
