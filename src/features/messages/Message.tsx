@@ -28,7 +28,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
       })
       .then((details) => {
         let results: string = "Wyświetlili: ";
-        details.forEach((x) => results += `${x.login}, `);
+        details.forEach((x) => (results += `${x.login}, `));
         details.length > 0 && setSeenBy(results.trim().slice(0, -1));
       })
       .catch((err) => {
@@ -39,16 +39,16 @@ const Message: React.FC<MessageProps> = ({ message }) => {
   return (
     <div onClick={handleMessageClick} style={{ cursor: "pointer" }}>
       <Comment
-        actions={
-          seenBy ? [<span key="seenBy">{seenBy}</span>] : undefined
-        }
+        actions={seenBy ? [<span key="seenBy">{seenBy}</span>] : undefined}
         key={message.id}
         author={message.authorLogin}
         avatar={<Avatar alt={message.authorLogin} icon={<UserOutlined />} />}
         content={<p>{message.content}</p>}
         datetime={
-          <Tooltip title={moment().format("DD-MM-YYYY HH:mm:ss")}>
-            <span>{moment().fromNow()}</span>
+          <Tooltip
+            title={moment(message.createdAt).format("DD-MM-YYYY HH:mm:ss")}
+          >
+            <span>{moment(message.createdAt).fromNow()}</span>
           </Tooltip>
         }
       />
